@@ -108,7 +108,7 @@ const sendLine = require("./sendline");
 
     sendLine(summaryMsg.join("\n"));
 
-    const updated = [["last_updated"], [Date.now()]];
+    const updated = [["last_updated"], [new Date().toString()]];
     uploadToSheet({
       updated,
       ...updateSheetData,
