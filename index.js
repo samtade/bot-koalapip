@@ -37,6 +37,10 @@ async function fetchData(url, name) {
 const uploadToSheet = require("./sheet");
 const sendLine = require("./sendline");
 
+function toNumber(value) {
+  return parseFloat(value.replace(/,/g, ""));
+}
+
 (async () => {
   try {
     openBrowser;
@@ -47,7 +51,7 @@ const sendLine = require("./sendline");
     await write(process.env.OP_PASSWORD, into(textBox(near("Password"))));
     await click(button("ok"));
 
-    const currentContract = Number(process.env.CURRENT_CONTRACT);
+    const currentContract = toNumber(process.env.CURRENT_CONTRACT);
     const dataPoint = {
       jobin: {
         desc: ["job arrivals"],
@@ -58,49 +62,50 @@ const sendLine = require("./sendline");
       jobt: {
         desc: ["leadtime con1", "leadtime con2", "leadtime con3"],
         warning: [
-          (value) => (currentContract === 1 && Number(value) > 3 ? "🔥" : ""),
-          (value) => (currentContract === 2 && Number(value) > 1 ? "🔥" : ""),
-          (value) => (currentContract === 2 && Number(value) > 0.5 ? "🔥" : ""),
+          (value) => (currentContract === 1 && toNumber(value) > 3 ? "🔥" : ""),
+          (value) => (currentContract === 2 && toNumber(value) > 1 ? "🔥" : ""),
+          (value) =>
+            currentContract === 2 && toNumber(value) > 0.5 ? "🔥" : "",
         ],
       },
       jobq: {
         desc: ["queued job"],
-        warning: [(value) => Number(value) > 0],
+        warning: [(value) => toNumber(value) > 0],
       },
       jobrev: {
         desc: ["rev/job con1", "rev/job con2", "rev/job con3"],
         warning: [
           (value) =>
-            currentContract === 1 && Number(value) < 1000 ? "🔥" : "",
+            currentContract === 1 && toNumber(value) < 1000 ? "🔥" : "",
           (value) =>
-            currentContract === 2 && Number(value) < 1300 ? "🔥" : "",
+            currentContract === 2 && toNumber(value) < 1300 ? "🔥" : "",
           (value) =>
-            currentContract === 2 && Number(value) < 2000 ? "🔥" : "",
+            currentContract === 2 && toNumber(value) < 2000 ? "🔥" : "",
         ],
       },
       s1q: {
         desc: ["q station 1"],
-        warning: [(value) => (Number(value) > 0 ? "🔥" : "")],
+        warning: [(value) => (toNumber(value) > 0 ? "🔥" : "")],
       },
       s2q: {
         desc: ["q station 2"],
-        warning: [(value) => (Number(value) > 0 ? "🔥" : "")],
+        warning: [(value) => (toNumber(value) > 0 ? "🔥" : "")],
       },
       s3q: {
         desc: ["q station 3"],
-        warning: [(value) => (Number(value) > 0 ? "🔥" : "")],
+        warning: [(value) => (toNumber(value) > 0 ? "🔥" : "")],
       },
       s1util: {
         desc: ["util. station 1"],
-        warning: [(value) => (Number(value) > 0.9 ? "🔥" : "")],
+        warning: [(value) => (toNumber(value) > 0.9 ? "🔥" : "")],
       },
       s2util: {
         desc: ["util. station 2"],
-        warning: [(value) => (Number(value) > 0.9 ? "🔥" : "")],
+        warning: [(value) => (toNumber(value) > 0.9 ? "🔥" : "")],
       },
       s3util: {
         desc: ["util. station 3"],
-        warning: [(value) => (Number(value) > 0.9 ? "🔥" : "")],
+        warning: [(value) => (toNumber(value) > 0.9 ? "🔥" : "")],
       },
       cash: {
         desc: ["cash on hand"],
