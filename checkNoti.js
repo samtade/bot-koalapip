@@ -37,6 +37,7 @@ async function checkNoti(dataObject) {
       const currentDatetime = new Date();
       currentDatetime.setMinutes(0);
       currentDatetime.setSeconds(0);
+      currentDatetime.setMilliseconds(0);
       console.log("Data:");
 
       const annc = [];
@@ -49,17 +50,21 @@ async function checkNoti(dataObject) {
         const specificDatetime = new Date(dt);
         specificDatetime.setMinutes(0);
         specificDatetime.setSeconds(0);
+        specificDatetime.setMilliseconds(0);
 
         if (specificDatetime.getTime() === currentDatetime.getTime()) {
-          if (!annc.length) {
+          if (annc.length === 0) {
             annc.push(`📢 แจ้งเตือนของวันที่ ${d}`);
           }
+
           console.log(`  >> Sent data: ${msg}`);
-          annc.push(msg);
+          annc.push(`- ${msg}`);
         }
       });
 
-      sendLine(annc.join("\n"));
+      if (annc.length !== 0) {
+        sendLine(annc.join("\n"));
+      }
     } else {
       console.log("No data found.");
     }

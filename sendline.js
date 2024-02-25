@@ -14,7 +14,7 @@ function sendLine(messages) {
   });
 
   console.log(`sent msg:
-  ${messages}
+${messages}
 `);
 }
 
