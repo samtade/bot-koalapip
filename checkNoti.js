@@ -35,22 +35,31 @@ async function checkNoti(dataObject) {
     const rows = response.data.values;
     if (rows.length) {
       const currentDatetime = new Date();
+      currentDatetime.setMinutes(0);
       currentDatetime.setSeconds(0);
       console.log("Data:");
-      rows.forEach(([dt, , , msg]) => {
+
+      const annc = [];
+      rows.forEach(([dt, d, , msg]) => {
         if (!msg) {
           return;
         }
 
         console.log(`${dt}: ${msg}`);
         const specificDatetime = new Date(dt);
+        specificDatetime.setMinutes(0);
         specificDatetime.setSeconds(0);
 
         if (specificDatetime.getTime() === currentDatetime.getTime()) {
+          if (!annc.length) {
+            annc.push(`📢 แจ้งเตือนของวันที่ ${d}`);
+          }
           console.log(`  >> Sent data: ${msg}`);
-          sendLine(msg);
+          annc.push(msg);
         }
       });
+
+      sendLine(annc.join("\n"));
     } else {
       console.log("No data found.");
     }
