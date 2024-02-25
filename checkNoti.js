@@ -32,6 +32,7 @@ async function checkNoti(dataObject) {
       range,
     });
 
+    // const rows = [[new Date(), 111, , "test test test"]];
     const rows = response.data.values;
     if (rows.length) {
       const currentDatetime = new Date();
