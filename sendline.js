@@ -12,6 +12,10 @@ function sendLine(messages) {
     to: process.env.LINE_GROUP_ID,
     messages: [{ type: "text", text: messages }],
   });
+
+  console.log(`sent msg:
+  ${messages}
+`);
 }
 
 module.exports = sendLine;

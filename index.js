@@ -148,5 +148,6 @@ function toNumber(value) {
     console.error(error);
   } finally {
     await closeBrowser();
+    console.log(`done update at ${new Date()}`);
   }
 })();
