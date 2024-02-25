@@ -1,10 +1,11 @@
 require("dotenv").config();
 
 const { google } = require("googleapis");
+const sendLine = require("./sendline");
 const sheets = google.sheets("v4");
 const credentials = require(process.env.SERVICE_ACCOUNT_CRED);
 
-async function uploadToSheet(dataObject) {
+async function checkNoti(dataObject) {
   // Set up the JWT client
   const client = new google.auth.JWT(
     credentials.client_email,
@@ -36,23 +37,25 @@ async function uploadToSheet(dataObject) {
       const currentDatetime = new Date();
       currentDatetime.setSeconds(0);
       console.log("Data:");
-      rows.forEach((row) => {
-        if (!!row[3]) {
-          console.log(`${row[0]}: ${row[3]}`);
+      rows.forEach(([dt, , , msg]) => {
+        if (!msg) {
+          return;
         }
 
-        const specificDatetime = new Date(row[0]);
+        console.log(`${dt}: ${msg}`);
+        const specificDatetime = new Date(dt);
         specificDatetime.setSeconds(0);
 
-        if (specificDatetime === currentDatetime) {
-          console.log(">>> Sent data");
+        if (specificDatetime.getTime() === currentDatetime.getTime()) {
+          console.log(`  >> Sent data: ${msg}`);
+          sendLine(msg);
         }
       });
     } else {
       console.log("No data found.");
     }
-    console.log("done update");
+    console.log(`done update at ${new Date()}`);
   });
 }
 
-module.exports = uploadToSheet;
+checkNoti();
