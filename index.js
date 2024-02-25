@@ -18,6 +18,10 @@ function urlData(data) {
   return `https://op.responsive.net/Littlefield/Plot?data=${data}&x=all`;
 }
 
+/**
+ * @param {Array<string>} name
+ * @param {string} url
+ */
 async function fetchData(url, name) {
   await openTab(url);
   await click(button("data"));
@@ -27,7 +31,7 @@ async function fetchData(url, name) {
     .map((i) => i.split("\t"));
 
   console.log(`${url} done...`);
-  return [["day", name], ...data];
+  return [["day", ...name], ...data];
 }
 
 const uploadToSheet = require("./sheet");
@@ -43,51 +47,66 @@ const sendLine = require("./sendline");
     await write(process.env.OP_PASSWORD, into(textBox(near("Password"))));
     await click(button("ok"));
 
+    const currentContract = Number(process.env.CURRENT_CONTRACT);
     const dataPoint = {
       jobin: {
-        desc: "job arrivals",
+        desc: ["job arrivals"],
       },
       jobout: {
-        desc: "job complete",
+        desc: ["complete con1", "complete con2", "complete con3"],
       },
       jobt: {
-        desc: "job leadtime",
-        warning: (value) => Number(value) > 3,
+        desc: ["leadtime con1", "leadtime con2", "leadtime con3"],
+        warning: [
+          (value) => (currentContract === 1 && Number(value) > 3 ? "🔥" : ""),
+          (value) => (currentContract === 2 && Number(value) > 1 ? "🔥" : ""),
+          (value) => (currentContract === 2 && Number(value) > 0.5 ? "🔥" : ""),
+        ],
       },
       jobq: {
-        desc: "queued job",
-        warning: (value) => Number(value) > 0,
+        desc: ["queued job"],
+        warning: [(value) => Number(value) > 0],
       },
       jobrev: {
-        desc: "revenue",
-        warning: (value) => Number(value) < 1000,
+        desc: ["rev/job con1", "rev/job con2", "rev/job con3"],
+        warning: [
+          (value) =>
+            currentContract === 1 && Number(value) < 1000 ? "🔥" : "",
+          (value) =>
+            currentContract === 2 && Number(value) < 1300 ? "🔥" : "",
+          (value) =>
+            currentContract === 2 && Number(value) < 2000 ? "🔥" : "",
+        ],
       },
       s1q: {
-        desc: "q station 1",
-        warning: (value) => Number(value) > 0,
+        desc: ["q station 1"],
+        warning: [(value) => (Number(value) > 0 ? "🔥" : "")],
       },
       s2q: {
-        desc: "q station 2",
-        warning: (value) => Number(value) > 0,
+        desc: ["q station 2"],
+        warning: [(value) => (Number(value) > 0 ? "🔥" : "")],
       },
       s3q: {
-        desc: "q station 3",
-        warning: (value) => Number(value) > 0,
+        desc: ["q station 3"],
+        warning: [(value) => (Number(value) > 0 ? "🔥" : "")],
       },
       s1util: {
-        desc: "util. station 1",
-        warning: (value) => Number(value) > 0.9,
+        desc: ["util. station 1"],
+        warning: [(value) => (Number(value) > 0.9 ? "🔥" : "")],
       },
       s2util: {
-        desc: "util. station 2",
-        warning: (value) => Number(value) > 0.9,
+        desc: ["util. station 2"],
+        warning: [(value) => (Number(value) > 0.9 ? "🔥" : "")],
       },
       s3util: {
-        desc: "util. station 3",
-        warning: (value) => Number(value) > 0.9,
+        desc: ["util. station 3"],
+        warning: [(value) => (Number(value) > 0.9 ? "🔥" : "")],
+      },
+      cash: {
+        desc: ["cash on hand"],
       },
       inv: {
-        desc: "inventory",
+        desc: ["inventory"],
       },
     };
 
@@ -101,9 +120,16 @@ const sendLine = require("./sendline");
         summaryMsg.push(`📝 รายงานข้อมูลวันที่ ${last[0]}`);
       }
 
-      summaryMsg.push(
-        `- ${desc}: ${last[1]} ${warning && warning(last[1]) ? "😱" : ""}`
-      );
+      const data = last.slice(1);
+      for (let i = 0; i < desc.length; i++) {
+        const v = data[i];
+        const d = desc[i];
+        summaryMsg.push(
+          `- ${d}: ${v} ${
+            Array.isArray(warning) && warning[i] ? warning[i](v) : ""
+          }`
+        );
+      }
     }
 
     sendLine(summaryMsg.join("\n"));
