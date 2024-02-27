@@ -28,7 +28,7 @@ async function fetchData(url, name) {
 
   const data = (await $("table.table-body").text())
     .split("\n")
-    .map((i) => i.split("\t"));
+    .map((i) => i.split("\t").map(toNumber));
 
   console.log(`${url} done...`);
   return [["day", ...name], ...data];
@@ -43,8 +43,6 @@ function toNumber(value) {
 
 (async () => {
   try {
-    openBrowser;
-
     await openBrowser();
     await goto("https://op.responsive.net/lt/tu/entry.html");
     await write(process.env.OP_USERNAME, into(textBox(near("Team ID"))));
