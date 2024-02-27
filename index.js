@@ -62,7 +62,7 @@ function toNumber(value) {
         warning: [
           (value) => (currentContract === 1 && value > 3 ? "🚨" : ""),
           (value) => (currentContract === 2 && value > 1 ? "🚨" : ""),
-          (value) => (currentContract === 2 && value > 0.5 ? "🚨" : ""),
+          (value) => (currentContract === 3 && value > 0.5 ? "🚨" : ""),
         ],
       },
       jobq: {
@@ -74,7 +74,7 @@ function toNumber(value) {
         warning: [
           (value) => (currentContract === 1 && value < 1000 ? "🚨" : ""),
           (value) => (currentContract === 2 && value < 1300 ? "🚨" : ""),
-          (value) => (currentContract === 2 && value < 2000 ? "🚨" : ""),
+          (value) => (currentContract === 3 && value < 2000 ? "🚨" : ""),
         ],
       },
       s1q: {
