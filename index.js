@@ -51,12 +51,12 @@ function toNumber(value) {
 
     const currentContract = toNumber(process.env.CURRENT_CONTRACT);
     const dataPoint = {
-      // jobin: {
-      //   desc: ["job arrivals"],
-      // },
-      // jobout: {
-      //   desc: ["complete con1", "complete con2", "complete con3"],
-      // },
+      jobin: {
+        desc: ["job arrivals"],
+      },
+      jobout: {
+        desc: ["complete con1", "complete con2", "complete con3"],
+      },
       jobt: {
         desc: ["leadtime con1", "leadtime con2", "leadtime con3"],
         warning: [
@@ -65,51 +65,48 @@ function toNumber(value) {
           (value) => (currentContract === 2 && value > 0.5 ? "🚨" : ""),
         ],
       },
-      // jobq: {
-      //   desc: ["queued job"],
-      //   warning: [(value) => value > 0],
-      // },
-      // jobrev: {
-      //   desc: ["rev/job con1", "rev/job con2", "rev/job con3"],
-      //   warning: [
-      //     (value) =>
-      //       currentContract === 1 && value < 1000 ? "🚨" : "",
-      //     (value) =>
-      //       currentContract === 2 && value < 1300 ? "🚨" : "",
-      //     (value) =>
-      //       currentContract === 2 && value < 2000 ? "🚨" : "",
-      //   ],
-      // },
-      // s1q: {
-      //   desc: ["q station 1"],
-      //   warning: [(value) => (value > 0 ? "🚨" : "")],
-      // },
-      // s2q: {
-      //   desc: ["q station 2"],
-      //   warning: [(value) => (value > 0 ? "🚨" : "")],
-      // },
-      // s3q: {
-      //   desc: ["q station 3"],
-      //   warning: [(value) => (value > 0 ? "🚨" : "")],
-      // },
-      // s1util: {
-      //   desc: ["util. station 1"],
-      //   warning: [(value) => (value > 0.9 ? "🚨" : "")],
-      // },
-      // s2util: {
-      //   desc: ["util. station 2"],
-      //   warning: [(value) => (value > 0.9 ? "🚨" : "")],
-      // },
-      // s3util: {
-      //   desc: ["util. station 3"],
-      //   warning: [(value) => (value > 0.9 ? "🚨" : "")],
-      // },
-      // cash: {
-      //   desc: ["cash on hand"],
-      // },
-      // inv: {
-      //   desc: ["inventory"],
-      // },
+      jobq: {
+        desc: ["queued job"],
+        warning: [(value) => value > 0],
+      },
+      jobrev: {
+        desc: ["rev/job con1", "rev/job con2", "rev/job con3"],
+        warning: [
+          (value) => (currentContract === 1 && value < 1000 ? "🚨" : ""),
+          (value) => (currentContract === 2 && value < 1300 ? "🚨" : ""),
+          (value) => (currentContract === 2 && value < 2000 ? "🚨" : ""),
+        ],
+      },
+      s1q: {
+        desc: ["q station 1"],
+        warning: [(value) => (value > 200 ? "🚨" : "")],
+      },
+      s2q: {
+        desc: ["q station 2"],
+        warning: [(value) => (value > 200 ? "🚨" : "")],
+      },
+      s3q: {
+        desc: ["q station 3"],
+        warning: [(value) => (value > 200 ? "🚨" : "")],
+      },
+      s1util: {
+        desc: ["util. station 1"],
+        warning: [(value) => (value > 0.9 ? "🚨" : "")],
+      },
+      s2util: {
+        desc: ["util. station 2"],
+        warning: [(value) => (value > 0.9 ? "🚨" : "")],
+      },
+      s3util: {
+        desc: ["util. station 3"],
+        warning: [(value) => (value > 0.9 ? "🚨" : "")],
+      },
+      cash: {
+        desc: ["cash on hand"],
+      },
+      inv: {
+        desc: ["inventory"],
+      },
     };
 
     let summaryMsg = [];
