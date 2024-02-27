@@ -140,6 +140,8 @@ function toNumber(value) {
     });
   } catch (error) {
     console.error(error);
+
+    sendLine("ลาป่วย 1 วัน");
   } finally {
     await closeBrowser();
     console.log(`done update at ${new Date()}`);
