@@ -4,7 +4,7 @@ const { google } = require("googleapis");
 const sheets = google.sheets("v4");
 const credentials = require(process.env.SERVICE_ACCOUNT_CRED);
 
-function uploadToSheet(dataObject) {
+function uploadToSheet(dataObject, action = "update") {
   // Set up the JWT client
   const client = new google.auth.JWT(
     credentials.client_email,
@@ -25,7 +25,7 @@ function uploadToSheet(dataObject) {
 
     Object.entries(dataObject).forEach(([sheetName, dataValue]) => {
       // Append the data to the sheet
-      sheets.spreadsheets.values.update(
+      sheets.spreadsheets.values[action](
         {
           auth: client,
           spreadsheetId,

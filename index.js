@@ -12,7 +12,10 @@ const {
   openTab,
   $,
   closeBrowser,
+  evaluate,
 } = require("taiko");
+var pull = require("lodash.pull");
+var sortBy = require("lodash.sortby");
 
 function urlData(data) {
   return `https://op.responsive.net/Littlefield/Plot?data=${data}&x=all`;
@@ -38,7 +41,45 @@ const uploadToSheet = require("./sheet");
 const sendLine = require("./sendline");
 
 function toNumber(value) {
+  if (!value) {
+    return value;
+  }
+
   return parseFloat(value.replace(/,/g, ""));
+}
+
+async function updateStanding(t, day) {
+  t[0] = `🏆 ประกาศอันดับ วันที่${day}`;
+
+  console.log(JSON.stringify(t));
+  sendLine(
+    t
+      .map((tt) =>
+        tt
+          .replace(/^1\t/, "🥇\t")
+          .replace(/^2\t/, "🥈\t")
+          .replace(/^3\t/, "🥉\t")
+          .replace("koalapip", "🐨koalapip")
+      )
+      .join("\n")
+  );
+
+  const teams = [];
+  const revs = [];
+  for (let i of sortBy(
+    t.map((i) => i.split("\t").slice(1)),
+    [0]
+  )) {
+    teams.push(i[0]);
+    revs.push(toNumber(i[1]));
+  }
+
+  console.log(JSON.stringify([teams, revs]));
+  teams[0] = "day";
+  revs[0] = day;
+
+  // uploadToSheet({ [`standing!A1`]: [teams] });
+  uploadToSheet({ [`standing!A1`]: [revs] }, "append");
 }
 
 (async () => {
@@ -48,6 +89,14 @@ function toNumber(value) {
     await write(process.env.OP_USERNAME, into(textBox(near("Team ID"))));
     await write(process.env.OP_PASSWORD, into(textBox(near("Password"))));
     await click(button("ok"));
+
+    await evaluate(() => {
+      openOverallStandingDialog();
+    });
+    const standingTableString = await $("#standingTable").text();
+    await click($("[title=close]"));
+    const t = standingTableString.split("\n");
+    pull(t, "", "\t");
 
     const currentContract = toNumber(process.env.CURRENT_CONTRACT);
     const dataPoint = {
@@ -111,11 +160,13 @@ function toNumber(value) {
 
     let summaryMsg = [];
     let updateSheetData = {};
+    let day = 0;
     for (let [key, { desc, warning }] of Object.entries(dataPoint)) {
       updateSheetData[key] = await fetchData(urlData(key.toUpperCase()), desc);
 
       const last = updateSheetData[key][updateSheetData[key].length - 1];
       if (!summaryMsg.length) {
+        day = last[0];
         summaryMsg.push(`📝 รายงานข้อมูลวันที่ ${last[0]}`);
       }
 
@@ -138,6 +189,8 @@ function toNumber(value) {
       updated,
       ...updateSheetData,
     });
+
+    updateStanding(t, 102);
   } catch (error) {
     console.error(error);
 
