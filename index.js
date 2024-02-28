@@ -76,10 +76,8 @@ async function updateStanding(t, day) {
 
   console.log(JSON.stringify([teams, revs]));
   teams[0] = "day";
-  revs[0] = day;
-
   // uploadToSheet({ [`standing!A1`]: [teams] });
-  uploadToSheet({ [`standing!A1`]: [revs] }, "append");
+  uploadToSheet({ [`standing!A1`]: [[day, ...revs]] }, "append");
 }
 
 (async () => {
