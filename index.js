@@ -190,7 +190,7 @@ async function updateStanding(t, day) {
       ...updateSheetData,
     });
 
-    updateStanding(t, 102);
+    updateStanding(t, day);
   } catch (error) {
     console.error(error);
 
