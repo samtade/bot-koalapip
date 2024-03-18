@@ -52,17 +52,17 @@ async function updateStanding(t, day) {
   t[0] = `🏆 ประกาศอันดับ วันที่${day}`;
 
   console.log(JSON.stringify(t));
-  sendLine(
-    t
-      .map((tt) =>
-        tt
-          .replace(/^1\t/, "🥇\t")
-          .replace(/^2\t/, "🥈\t")
-          .replace(/^3\t/, "🥉\t")
-          .replace("koalapip", "🐨koalapip")
-      )
-      .join("\n")
-  );
+
+  const msgLine = t
+    .map((tt) =>
+      tt
+        .replace(/^1\t/, "🥇\t")
+        .replace(/^2\t/, "🥈\t")
+        .replace(/^3\t/, "🥉\t")
+        .replace("koalapip", "🐨koalapip")
+    )
+    .join("\n");
+  sendLine(msgLine);
 
   const teams = [];
   const revs = [];
@@ -78,9 +78,11 @@ async function updateStanding(t, day) {
   teams[0] = "day";
   // uploadToSheet({ [`standing!A1`]: [teams] });
   uploadToSheet({ [`standing!A1`]: [[day, ...revs]] }, "append");
+
+  return msgLine;
 }
 
-(async () => {
+async function startCrawling() {
   try {
     await openBrowser();
     await goto("https://op.responsive.net/lt/tu/entry.html");
@@ -180,15 +182,15 @@ async function updateStanding(t, day) {
       }
     }
 
-    sendLine(summaryMsg.join("\n"));
-
     const updated = [["last_updated"], [new Date().toString()]];
     uploadToSheet({
       updated,
       ...updateSheetData,
     });
 
-    updateStanding(t, day);
+    const standingLineMsg = await updateStanding(t, day);
+
+    sendLine(summaryMsg.join("\n") + "\n\n" + standingLineMsg);
   } catch (error) {
     console.error(error);
 
@@ -197,4 +199,6 @@ async function updateStanding(t, day) {
     await closeBrowser();
     console.log(`done update at ${new Date()}`);
   }
-})();
+}
+
+startCrawling();
